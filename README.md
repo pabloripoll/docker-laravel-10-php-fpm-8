@@ -99,7 +99,7 @@ Going to remove myphp
  ✔ Container myphp  Removed
 ```
 
-Clear container
+Clear container network
 ```bash
 $ make clear
 [+] Running 1/1
@@ -127,9 +127,9 @@ Docker stats
 $ sudo docker system df
 TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
 Images          1         1         199.5MB   0B (0%)
-Containers      1         1         4B        0B (0%)
+Containers      1         1         33.32MB   0B (0%)
 Local Volumes   1         0         117.9MB   117.9MB (100%)
-Build Cache     39        0         10.2kB    10.2kB
+Build Cache     39        0         10.21kB    10.21kB
 ```
 
 Removing container and image generated
