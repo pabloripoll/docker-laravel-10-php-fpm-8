@@ -1,8 +1,16 @@
-# Laravel 10 - Service
+# Docker Laravel 10 & MariaDB Services
 
-Container image for Docker
+<div style="width:100%;">
+    <a href="https://github.com/pabloripoll?tab=repositories" style="width:100%;">
+        <img
+            style="width:190px;float:right;position:absolute;right:50px;top:0"
+            src="https://pabloripoll.com/files/logo-light-100x300.png"/>
+    </a>
+</div>
 
-## Alpine 3.19 / Nginx 1.24 / PHP 8.3
+Repository: https://github.com/pabloripoll/docker-laravel-php-8.3-service
+
+## Laravel Docker Container Service
 
 - [Laravel 10](https://laravel.com/docs/10.x/releases)
 
@@ -12,7 +20,13 @@ Container image for Docker
 
 - [Alpine Linux 3.19](https://www.alpinelinux.org/)
 
-Repository: https://github.com/pabloripoll/docker-laravel-php-8.3-service
+## MariaDB Docker Container Service
+
+- [MariaDB 10.11](https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/)
+
+- [Alpine Linux 3.19](https://www.alpinelinux.org/)
+
+## Docker Content
 
 * Built on the lightweight and secure Alpine Linux distribution
 * Multi-platform, supporting AMD4, ARMv6, ARMv7, ARM64
@@ -23,8 +37,6 @@ Repository: https://github.com/pabloripoll/docker-laravel-php-8.3-service
 * The services Nginx, PHP-FPM and supervisord run under a non-privileged user (nobody) to make it more secure
 * The logs of all the services are redirected to the output of the Docker container (visible with `docker logs -f <container name>`)
 * Follows the KISS principle (Keep It Simple, Stupid) to make it easy to understand and adjust the image to your needs
-
-## [![Personal Page](https://pabloripoll.com/files/logo-light-100x300.png)](https://github.com/pabloripoll?tab=repositories)
 
 ## Project as Service
 
@@ -186,4 +198,55 @@ Windows IP Configuration
  IP Routing Enabled. . . . . . . . : No
  WINS Proxy Enabled. . . . . . . . : No
  DNS Suffix Search List. . . . . . : scs.ad.cs.cmu.edu
+```
+
+## Check Laravel status
+
+Visiting `http://localhost:8888/` should display Laravel's welcome page.
+
+Use an API platform *(Postman, Firefox RESTClient, etc..)* to check connection with Laravel
+```
+GET: http://localhost:8888/api/v1/health
+
+{
+    "status": true
+}
+```
+
+## Database
+
+Check connection to database through a test endpoint. If conenction params are not set already will response as follows
+```
+GET: http://localhost:8888/api/v1/health/db
+
+{
+    "status": false,
+    "message": "Connect to database failed - Check connection params.",
+    "error": {
+        "errorInfo": [
+            "HY000",
+            2002,
+            "Host is unreachable"
+        ]
+    }
+}
+```
+
+Complete the MySQL database connection params. Use local hostname IP `$ make hostname` to set `DB_HOST` variable
+```
+DB_CONNECTION=mysql
+DB_HOST=192.168.1.41
+DB_PORT=8889
+DB_DATABASE=laravel
+DB_USERNAME=laravel
+DB_PASSWORD=123456
+```
+
+Checking the connection to database once is set correctly will response as follows
+```
+GET: http://localhost:8888/api/v1/health/db
+
+{
+    "status": true
+}
 ```
