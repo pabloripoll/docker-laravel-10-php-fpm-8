@@ -6,7 +6,6 @@
             style="width:150px;float:left;"
             src="https://pabloripoll.com/files/logo-light-100x300.png"/>
     </a>
-    <a style="height:auto;margin:100px 0 0 50px;">https://github.com/pabloripoll/docker-laravel-php-8.3-service</a>
 </div>
 
 ## Laravel Docker Container Service
