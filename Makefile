@@ -38,33 +38,7 @@ ports-check: ## shows this project ports availability on local machine
 	cd docker/mariadb && $(MAKE) port-check
 
 # -------------------------------------------------------------------------------------------------
-#  Laravel
-# -------------------------------------------------------------------------------------------------
-.PHONY: laravel-download laravel-ssh laravel-set laravel-build laravel-start laravel-stop laravel-destroy
-
-laravel-download: ## dowloads the Laravel zip source into project root
-	curl https://laravel.org/laravel-6.4.3.zip -O -J -L
-
-laravel-ssh: ## enters the Laravel container shell
-	cd docker/nginx-php && $(MAKE) ssh
-
-laravel-set: ## sets the Laravel PHP enviroment file to build the container
-	cd docker/nginx-php && $(MAKE) env-set
-
-laravel-build: ## builds the Laravel PHP container from Docker image
-	cd docker/nginx-php && $(MAKE) build
-
-laravel-start: ## starts up the Laravel PHP container running
-	cd docker/nginx-php && $(MAKE) up
-
-laravel-stop: ## stops the Laravel PHP container but data won't be destroyed
-	cd docker/nginx-php && $(MAKE) stop
-
-laravel-destroy: ## stops and removes the Laravel PHP container from Docker network destroying its data
-	cd docker/nginx-php && $(MAKE) stop clear
-
-# -------------------------------------------------------------------------------------------------
-#  Laravel - MariaDB Database
+#  Database Service
 # -------------------------------------------------------------------------------------------------
 .PHONY: database-ssh database-set database-build database-start database-stop database-destroy database-replace database-backup
 
@@ -99,7 +73,7 @@ database-backup: ## creates a .sql file from container database to the determine
 	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database "${C_GRN}"backup has been created."${C_END};
 
 # -------------------------------------------------------------------------------------------------
-#  Laravel Project
+#  Laravel & Database
 # -------------------------------------------------------------------------------------------------
 .PHONY: project-set project-build project-start project-stop project-destroy
 
@@ -125,3 +99,26 @@ repo-flush: ## clears local git repository cache specially to update .gitignore
 	git rm -rf --cached .
 	git add .
 	git commit -m "fix: cache cleared for untracked files"
+
+# -------------------------------------------------------------------------------------------------
+#  Laravel Service
+# -------------------------------------------------------------------------------------------------
+.PHONY: laravel-ssh laravel-set laravel-build laravel-start laravel-stop laravel-destroy
+
+laravel-ssh: ## enters the Laravel container shell
+	cd docker/nginx-php && $(MAKE) ssh
+
+laravel-set: ## sets the Laravel PHP enviroment file to build the container
+	cd docker/nginx-php && $(MAKE) env-set
+
+laravel-build: ## builds the Laravel PHP container from Docker image
+	cd docker/nginx-php && $(MAKE) build
+
+laravel-start: ## starts up the Laravel PHP container running
+	cd docker/nginx-php && $(MAKE) up
+
+laravel-stop: ## stops the Laravel PHP container but data won't be destroyed
+	cd docker/nginx-php && $(MAKE) stop
+
+laravel-destroy: ## stops and removes the Laravel PHP container from Docker network destroying its data
+	cd docker/nginx-php && $(MAKE) stop clear
