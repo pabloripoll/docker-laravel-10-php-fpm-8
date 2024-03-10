@@ -1,5 +1,3 @@
-# Dockerized Laravel 10 & MariaDB Services
-
 <div style="width:100%;float:left;clear:both;margin-bottom:50px;">
     <a href="https://github.com/pabloripoll?tab=repositories">
         <img
@@ -7,6 +5,8 @@
             src="https://pabloripoll.com/files/logo-light-100x300.png"/>
     </a>
 </div>
+
+# Dockerized Laravel 10 & MariaDB Services
 
 ### Laravel Docker Container Service
 
