@@ -3,7 +3,7 @@
 <div style="width:100%;float:left;clear:both;margin-bottom:50px;">
     <a style="height:auto;" href="https://github.com/pabloripoll?tab=repositories">
         <img
-            style="width:150px;float:left;"
+            style="width:150px;float:left;position:absolute"
             src="https://pabloripoll.com/files/logo-light-100x300.png"/>
     </a>
 </div>
