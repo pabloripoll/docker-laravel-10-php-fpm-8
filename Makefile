@@ -10,20 +10,11 @@ C_END='\033[0m'
 
 include .env
 
-DOCKER_ABBR=$(PROJECT_ABBR)
-DOCKER_HOST=$(PROJECT_HOST)
-DOCKER_PORT=$(PROJECT_PORT)
-DOCKER_NAME=$(PROJECT_NAME)
-DOCKER_PATH=$(PROJECT_PATH)
+DOCKER_TITLE=$(PROJECT_TITLE)
 
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
-DOCKER_COMPOSE?=$(DOCKER_USER) docker compose
-DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
-DOCKER_EXEC_TOOLS_APP=$(DOCKER_USER) docker exec -it $(DOCKER_NAME) sh
-
-COMPOSER_INSTALL="composer update"
 
 help: ## shows this Makefile help message
 	echo 'usage: make [target]'
@@ -42,84 +33,95 @@ hostname: ## shows local machine ip
 fix-permission: ## sets project directory permission
 	$(DOCKER_USER) chown -R ${USER}: $(ROOT_DIR)/
 
-host-check: ## shows this project ports availability on local machine
-	echo "Checking configuration for "${C_YEL}"$(DOCKER_ABBR)"${C_END}" container:";
-	if [ -z "$$($(DOCKER_USER) lsof -i :$(DOCKER_PORT))" ]; then \
-		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
-    else \
-		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_RED}"$(DOCKER_PORT) is busy. Update ./.env file."${C_END}; \
-	fi
+ports-check: ## shows this project ports availability on local machine
+	cd docker/nginx-php && $(MAKE) port-check
+	cd docker/mariadb && $(MAKE) port-check
 
 # -------------------------------------------------------------------------------------------------
-#  Enviroment
+#  Laravel
 # -------------------------------------------------------------------------------------------------
-.PHONY: env env-set
+.PHONY: laravel-download laravel-ssh laravel-set laravel-build laravel-start laravel-stop laravel-destroy
 
-env: ## checks if docker .env file exists
-	if [ -f ./docker/.env ]; then \
-		echo ${C_BLU}$(DOCKER_ABBR)${C_END}" docker-compose.yml .env file "${C_GRN}"is set."${C_END}; \
-    else \
-		echo ${C_BLU}$(DOCKER_ABBR)${C_END}" docker-compose.yml .env file "${C_RED}"is not set."${C_END}" \
-	Create it by executing "${C_YEL}"$$ make env-set"${C_END}; \
-	fi
+laravel-download: ## dowloads the Laravel zip source into project root
+	curl https://laravel.org/laravel-6.4.3.zip -O -J -L
 
-env-set: ## sets docker .env file
-	echo "COMPOSE_PROJECT_NAME=\"$(DOCKER_NAME)\"\
-	\nCOMPOSE_PROJECT_HOST=$(DOCKER_HOST)\
-	\nCOMPOSE_PROJECT_PORT=$(DOCKER_PORT)\
-	\nCOMPOSE_PROJECT_PATH=\"$(DOCKER_PATH)\"" > ./docker/.env; \
-	echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" docker-compose.yml .env file "${C_GRN}"has been set."${C_END};
+laravel-ssh: ## enters the Laravel container shell
+	cd docker/nginx-php && $(MAKE) ssh
 
-# -------------------------------------------------------------------------------------------------
-#  Docker
-# -------------------------------------------------------------------------------------------------
-.PHONY: hostname fix-permission host-check
+laravel-set: ## sets the Laravel PHP enviroment file to build the container
+	cd docker/nginx-php && $(MAKE) env-set
 
-docker-ip:
-	$(DOCKER_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+laravel-build: ## builds the Laravel PHP container from Docker image
+	cd docker/nginx-php && $(MAKE) build
 
-docker-host:
-	echo ${C_BLU}"Docker Host:"${C_END}; \
-	echo $(shell make docker-ip):$(DOCKER_PORT)
-	echo ${C_BLU}"Local Host:"${C_END}; \
-	echo localhost:$(DOCKER_PORT); \
-	echo 127.0.0.1:$(DOCKER_PORT); \
-	echo ${C_BLU}"Project Host:"${C_END}; \
-	echo $(DOCKER_HOST):$(DOCKER_PORT); \
+laravel-start: ## starts up the Laravel PHP container running
+	cd docker/nginx-php && $(MAKE) up
+
+laravel-stop: ## stops the Laravel PHP container but data won't be destroyed
+	cd docker/nginx-php && $(MAKE) stop
+
+laravel-destroy: ## stops and removes the Laravel PHP container from Docker network destroying its data
+	cd docker/nginx-php && $(MAKE) stop clear
 
 # -------------------------------------------------------------------------------------------------
-#  Container
+#  Laravel - MariaDB Database
 # -------------------------------------------------------------------------------------------------
-.PHONY: ssh build install dev up start first stop restart clear
+.PHONY: database-ssh database-set database-build database-start database-stop database-destroy database-replace database-backup
 
-ssh:
-	$(DOCKER_EXEC_TOOLS_APP)
+database-ssh: ## enters the database container shell
+	cd docker/mariadb && $(MAKE) ssh
 
-build:
-	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
+database-set: ## sets the database enviroment file to build the container
+	cd docker/mariadb && $(MAKE) env-set
 
-install:
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
+database-build: ## builds the database container from Docker image
+	cd docker/mariadb && $(MAKE) build
 
-dev:
-	echo ${C_YEL}"\"dev\" recipe has not usage in this project"${C_END};
+database-start: ## starts up the database container running
+	cd docker/mariadb && $(MAKE) up
 
-up:
-	cd docker && $(DOCKER_COMPOSE) up -d
-	$(MAKE) docker-host
+database-stop: ## stops the database container but data won't be destroyed
+	cd docker/mariadb && $(MAKE) stop
 
-start:
-	$(MAKE) build up
+database-destroy: ## stops and removes the database container from Docker network destroying its data
+	cd docker/mariadb && $(MAKE) stop clear
 
-first:
-	$(MAKE) build install up
+database-install: ## installs an initialized database copying the determined .sql file into the container by raplacing it
+	cd docker/mariadb && $(MAKE) sql-install
+	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database has been "${C_GRN}"installed."${C_END};
 
-stop:
-	cd docker && $(DOCKER_COMPOSE) kill || true
-	cd docker && $(DOCKER_COMPOSE) rm --force || true
+database-replace: ## replaces container database copying the determined .sql file into the container by raplacing it
+	cd docker/mariadb && $(MAKE) sql-replace
+	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database has been "${C_GRN}"replaced."${C_END};
 
-restart:
-	$(MAKE) stop start
+database-backup: ## creates a .sql file from container database to the determined local host directory
+	cd docker/mariadb && $(MAKE) sql-backup
+	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database "${C_GRN}"backup has been created."${C_END};
 
-clear:
-	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
+# -------------------------------------------------------------------------------------------------
+#  Laravel Project
+# -------------------------------------------------------------------------------------------------
+.PHONY: project-set project-build project-start project-stop project-destroy
+
+project-set: ## sets both Laravel and database .env files used by docker-compose.yml
+	$(MAKE) laravel-set database-set
+
+project-build: ## builds both Laravel and database containers from their Docker images
+	$(MAKE) laravel-set database-set database-build laravel-build
+
+project-start: ## starts up both Laravel and database containers running
+	$(MAKE) database-start laravel-start
+
+project-stop: ## stops both Laravel and database containers but data won't be destroyed
+	$(MAKE) database-stop laravel-stop
+
+project-destroy: ## stops and removes both Laravel and database containers from Docker network destroying their data
+	$(MAKE) database-destroy laravel-destroy
+
+# -------------------------------------------------------------------------------------------------
+#  Repository Helper
+# -------------------------------------------------------------------------------------------------
+repo-flush: ## clears local git repository cache specially to update .gitignore
+	git rm -rf --cached .
+	git add .
+	git commit -m "fix: cache cleared for untracked files"

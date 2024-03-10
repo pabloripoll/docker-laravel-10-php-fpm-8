@@ -51,12 +51,14 @@ RUN apk add --no-cache \
   ${PHP_V}-xml \
   ${PHP_V}-xmlreader \
   ${PHP_V}-xmlwriter \
+  ${PHP_V}-simplexml \
   ${PHP_V}-zip \
   # Database
   ${PHP_V}-pdo \
   ${PHP_V}-pdo_sqlite \
   ${PHP_V}-sqlite3 \
   ${PHP_V}-pdo_mysql \
+  ${PHP_V}-mysqlnd \
   ${PHP_V}-mysqli \
   ${PHP_V}-pdo_pgsql \
   ${PHP_V}-pgsql \

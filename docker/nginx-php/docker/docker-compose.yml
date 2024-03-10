@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  slight83:
-    image: php-8.3:alpine-3.19
+  prestashop:
+    image: ${COMPOSE_PROJECT_NAME}:${COMPOSE_PROJECT_ABBR}-nginx-php
     pull_policy: never
     build:
       context: ./
@@ -23,3 +23,4 @@ services:
       timeout: 5s
       retries: 5
     tty: true
+    restart: unless-stopped
