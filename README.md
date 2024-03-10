@@ -24,7 +24,7 @@
 
 - [Alpine Linux 3.19](https://www.alpinelinux.org/)
 
-### Docker Content
+### Project objetives with Docker
 
 * Built on the lightweight and secure Alpine Linux distribution
 * Multi-platform, supporting AMD4, ARMv6, ARMv7, ARM64
