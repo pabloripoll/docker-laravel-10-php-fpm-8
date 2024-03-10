@@ -1,12 +1,12 @@
 # Dockerized Laravel 10 & MariaDB Services
 
 <div style="width:100%;float:left;clear:both;margin-bottom:50px;">
-    <a style="height:auto;" href="https://github.com/pabloripoll?tab=repositories">
+    <a style="float:left;height:auto;" href="https://github.com/pabloripoll?tab=repositories">
         <img
             style="width:150px;float:left;"
             src="https://pabloripoll.com/files/logo-light-100x300.png"/>
     </a>
-    <a href="https://github.com/pabloripoll?tab=repositories">https://github.com/pabloripoll?tab=repositories</a>
+    <a style="float:left;height:auto;" href="https://github.com/pabloripoll?tab=repositories">https://github.com/pabloripoll?tab=repositories</a>
 </div>
 
 ### Laravel Docker Container Service
