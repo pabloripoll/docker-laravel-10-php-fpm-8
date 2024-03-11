@@ -334,7 +334,7 @@ GET: http://localhost:8888/api/v1/health
 }
 ```
 
-## Database
+## Check Laravel database connection
 
 Check connection to database through a test endpoint. If conenction params are not set already will response as follows
 ```
