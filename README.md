@@ -43,6 +43,24 @@ As client end user both services can be accessed through `localhost:${PORT}` but
 * Follows the KISS principle (Keep It Simple, Stupid) to make it easy to understand and adjust the image to your needs
 * Services independence to connect Laravel to other database allocation
 
+#### PHP config
+
+To use a different PHP 8 version the following [Dockerfile](docker/nginx-php/docker/Dockerfile) arguments and variable must be modified:
+```Dockerfile
+ARG PHP_VERSION=8.3
+ARG PHP_ALPINE=83
+...
+ENV PHP_V="php83"
+```
+
+And must be inform to [Supervisor Config](docker/nginx-php/docker/config/supervisord.conf) the FPM version to run.
+```bash
+...
+[program:php-fpm]
+command=php-fpm83 -F
+...
+```
+
 #### Containers on Windows systems
 
 This project has not been tested on Windows OS neither I can use it to test it. So, I cannot bring much support on it.
