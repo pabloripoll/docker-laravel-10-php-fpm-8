@@ -110,11 +110,11 @@ Directories and main files on a tree architecture description
 │
 ├── resources
 │   ├── database
-│   │   ├── wordpress-init.sql
-│   │   └── wordpress-backup.sql
+│   │   ├── laravel-init.sql
+│   │   └── laravel-backup.sql
 │   │
 │   └── laravel
-│       └── (any file or directory required for re-building the Wordpress app...)
+│       └── (any file or directory required for re-building the app...)
 │
 ├── laravel
 │   └── (application...)
@@ -126,7 +126,7 @@ Directories and main files on a tree architecture description
 
 ## Automation with Makefile
 
-Makefiles are often used to automate the process of building and compiling software on Unix-based systems, including Linux and macOS.
+Makefiles are often used to automate the process of building and compiling software on Unix-based systems as Linux and macOS.
 
 *On Windows - I recommend to use Makefile: \
 https://stackoverflow.com/questions/2532234/how-to-run-a-makefile-in-windows*
@@ -188,7 +188,6 @@ $ make hostname
 - Or whatever you like. This Docker project doesn't come with [PhpMyAdmin](https://www.phpmyadmin.net/) to make it lighter.
 
 ## Build the project
-
 
 ```bash
 $ make project-build
@@ -288,34 +287,29 @@ LARAVEL DB docker-compose.yml .env file has been set.
 Docker container
 ```bash
 $ sudo docker ps -a
-CONTAINER ID   IMAGE      COMMAND    CREATED         STATUS                     PORTS                                             NAMES
-0f94fe4739a6   php-8...   "doc…"     2 minutes ago   Up 2 minutes (unhealthy)   9000/tcp, 0.0.0.0:8888->80/tcp, :::8888->80/tcp   myphp
+CONTAINER ID   IMAGE      COMMAND    CREATED      STATUS      PORTS                                             NAMES
+ecd27aeae010   lara...    "docker-php-entrypoi…"   3 mins...   9000/tcp, 0.0.0.0:8888->80/tcp, :::8888->80/tcp  laravel-app
+52a9994c31b0   lara...    "/init"                  4 mins...   0.0.0.0:8889->3306/tcp, :::8889->3306/tcp        laravel-db
+
 ```
 
 Docker image
 ```bash
 $ sudo docker images
 REPOSITORY   TAG           IMAGE ID       CREATED         SIZE
-php-8.3      alpine-3.19   8f7db0dfcde1   3 minutes ago   199MB
+laravel-app  lara...       373f6967199b   5 minutes ago   200MB
+laravel-db   lara...       1f1775f7e1db   6 minutes ago   333MB
 ```
 
 Docker stats
 ```bash
 $ sudo docker system df
 TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
-Images          1         1         199.5MB   0B (0%)
-Containers      1         1         33.32MB   0B (0%)
+Images          1         1         532.2MB   0B (0%)
+Containers      1         1         25.03kB   0B (0%)
 Local Volumes   1         0         117.9MB   117.9MB (100%)
-Build Cache     39        0         10.21kB    10.21kB
+Build Cache     39        0         10.21kB   10.21kB
 ```
-
-Removing container and image generated
-```bash
-$ sudo docker system prune
-...
-Total reclaimed space: 116.4MB
-```
-*(no need for pruning volume)*
 
 ## Reset configurations on the run
 In [docker/config/](docker/config/) you'll find the default configuration files for Nginx, PHP and PHP-FPM.
@@ -389,3 +383,59 @@ GET: http://localhost:8888/api/v1/health/db
     "status": true
 }
 ```
+
+## Stop Containers
+
+Using the following Makefile recipe stops application and database containers, keeping database persistance and application files binded without any loss
+```bash
+$ make project-stop
+
+[+] Killing 1/1
+ ✔ Container laravel-db  Killed               0.5s
+Going to remove laravel-db
+[+] Removing 1/0
+ ✔ Container laravel-db  Removed              0.0s
+[+] Killing 1/1
+ ✔ Container laravel-app  Killed              0.5s
+Going to remove laravel-app
+[+] Removing 1/0
+ ✔ Container laravel-app  Removed             0.0s
+```
+
+## Remove Containers
+
+To stop and remove both application and database containers from docker network use the following Makefile recipe
+```bash
+$ make project-destroy
+
+[+] Killing 1/1
+ ✔ Container laravel-db  Killed                    0.4s
+Going to remove laravel-db
+[+] Removing 1/0
+ ✔ Container laravel-db  Removed                   0.0s
+[+] Running 1/1
+ ✔ Network laravel-db_default  Removed             0.3s
+
+[+] Killing 1/1
+ ✔ Container laravel-app  Killed                   0.4s
+Going to remove laravel-app
+[+] Removing 1/0
+ ✔ Container laravel-app  Removed                  0.0s
+[+] Running 1/1
+ ✔ Network laravel-app_default  Removed
+```
+
+The, remove the Docker images created for containers by its tag name reference
+```bash
+$ docker rmi $(docker images --filter=reference="*:laravel-*" -q)
+```
+
+Prune Docker system cache
+```bash
+$ sudo docker system prune
+
+...
+Total reclaimed space: 423.4MB
+```
+
+*(no need for pruning volume)*
