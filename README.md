@@ -41,7 +41,7 @@ As client end user both services can be accessed through `localhost:${PORT}` but
 * The services Nginx, PHP-FPM and supervisord run under a project-privileged user to make it more secure
 * The logs of all the services are redirected to the output of the Docker container (visible with `docker logs -f <container name>`)
 * Follows the KISS principle (Keep It Simple, Stupid) to make it easy to understand and adjust the image to your needs
-* Services independence to connect Laravel to other database allocation
+* Services independency to connect the application to other database allocation
 
 #### PHP config
 
