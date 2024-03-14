@@ -311,28 +311,6 @@ Local Volumes   1         0         117.9MB   117.9MB (100%)
 Build Cache     39        0         10.21kB   10.21kB
 ```
 
-## Reset configurations on the run
-In [docker/config/](docker/config/) you'll find the default configuration files for Nginx, PHP and PHP-FPM.
-
-If you want to extend or customize that you can do so by mounting a configuration file in the correct folder;
-
-Nginx configuration:
-```
-$ docker run -v "`pwd`/nginx-server.conf:/etc/nginx/conf.d/server.conf" ${COMPOSE_PROJECT_NAME}
-```
-
-PHP configuration:
-```
-$ docker run -v "`pwd`/php-setting.ini:/etc/php83/conf.d/settings.ini" ${COMPOSE_PROJECT_NAME}
-```
-
-PHP-FPM configuration:
-```
-$ docker run -v "`pwd`/php-fpm-settings.conf:/etc/php83/php-fpm.d/server.conf" ${COMPOSE_PROJECT_NAME}
-```
-
-_Note; Because `-v` requires an absolute path I've added `pwd` in the example to return the absolute path to the current directory_
-
 ## Check Laravel status
 
 Visiting `http://localhost:8888/` should display Laravel's welcome page.
@@ -438,4 +416,10 @@ $ sudo docker system prune
 Total reclaimed space: 423.4MB
 ```
 
-*(no need for pruning volume)*
+Prune Docker volume cache
+```bash
+$ sudo docker system prune
+
+...
+Total reclaimed space: 50.7MB
+```
