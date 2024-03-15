@@ -25,7 +25,7 @@ DOCKER_COMPOSE?=$(DOCKER_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
 DOCKER_EXEC_TOOLS_APP=$(DOCKER_USER) docker exec -it $(DOCKER_CAAS) sh
 
-COMPOSER_INSTALL="composer update"
+COMPOSER_UPDATE="composer update"
 
 help: ## shows this Makefile help message
 	echo 'usage: make [target]'
@@ -79,6 +79,9 @@ build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 install:
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c composer create-project drupal/recommended-project:10.2.4 .
+
+update:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
 
 dev:
@@ -102,3 +105,17 @@ restart:
 
 clear:
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
+
+# -------------------------------------------------------------------------------------------------
+#  Container update on the run
+# -------------------------------------------------------------------------------------------------
+.PHONY: nginx-conf php-conf php-fpm-conf
+
+nginx-conf:
+	$(DOCKER_USER) docker run -v "`pwd`/nginx-server.conf:/etc/nginx/conf.d/server.conf" $(DOCKER_CAAS):$(DOCKER_ABBR)-nginx-php
+
+php-conf:
+	$(DOCKER_USER) docker run -v "`pwd`/php-setting.ini:/etc/php83/conf.d/settings.ini" $(DOCKER_CAAS)
+
+php-fpm-conf:
+	$(DOCKER_USER) docker run -v "`pwd`/php-fpm-settings.conf:/etc/php83/php-fpm.d/server.conf" $(DOCKER_CAAS)
