@@ -70,7 +70,7 @@ env-set: ## sets docker .env file
 # -------------------------------------------------------------------------------------------------
 #  Container
 # -------------------------------------------------------------------------------------------------
-.PHONY: ssh build install dev up start first stop restart clear
+.PHONY: ssh build install update dev up start first stop restart clear
 
 ssh:
 	$(DOCKER_EXEC_TOOLS_APP)
@@ -79,7 +79,7 @@ build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 install:
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c composer create-project drupal/recommended-project:10.2.4 .
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c composer create-project ...
 
 update:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
