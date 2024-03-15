@@ -79,7 +79,7 @@ build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 install:
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c composer create-project ...
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c composer create-project laravel/laravel:^10.0 example-app
 
 update:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
