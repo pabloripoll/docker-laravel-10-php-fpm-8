@@ -43,7 +43,6 @@ RUN set -xe \
         libpng-dev \
         libxslt-dev \
         patch \
-        mercurial \
         openssh-client
 
 # Install PHP and its extensions packages and remove default server definition
