@@ -108,7 +108,7 @@ dev: ## set a development enviroment
 .PHONY: app-install app-update
 
 app-install: ## installs the application an dependencies packages
-	$(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
 
 app-update: ## updates dependencies packages
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_UPDATE)
