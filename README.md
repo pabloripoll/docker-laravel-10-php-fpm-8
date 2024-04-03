@@ -333,7 +333,7 @@ GET: http://localhost:8888/api/v1/health/db
 }
 ```
 
-## Custom Database Service
+## Custom database service usage
 
 In case of using the repository [https://github.com/pabloripoll/docker-mariadb-10.11](https://github.com/pabloripoll/docker-mariadb-10.11) as database service, complete the application mysql database connection params in [laravel/.env](laravel/.env) file.
 
