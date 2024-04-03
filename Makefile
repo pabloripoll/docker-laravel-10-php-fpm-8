@@ -29,18 +29,18 @@ help: ## shows this Makefile help message
 
 hostname: ## shows local machine ip
 	echo $(word 1,$(shell hostname -I))
+	echo $(ip addr show | grep "\binet\b.*\bdocker0\b" | awk '{print $2}' | cut -d '/' -f 1)
 
 fix-permission: ## sets project directory permission
 	$(DOCKER_USER) chown -R ${USER}: $(ROOT_DIR)/
 
-ports-check: ## shows this project ports availability on local machine
+host-check: ## shows this project ports availability on local machine
 	cd docker/nginx-php && $(MAKE) port-check
-	cd docker/mariadb && $(MAKE) port-check
 
 # -------------------------------------------------------------------------------------------------
 #  Laravel Service
 # -------------------------------------------------------------------------------------------------
-.PHONY: laravel-ssh laravel-set laravel-build laravel-start laravel-stop laravel-destroy
+.PHONY: laravel-ssh laravel-set laravel-create laravel-start laravel-stop laravel-destroy laravel-install laravel-update
 
 laravel-ssh: ## enters the Laravel container shell
 	cd docker/nginx-php && $(MAKE) ssh
@@ -48,10 +48,10 @@ laravel-ssh: ## enters the Laravel container shell
 laravel-set: ## sets the Laravel PHP enviroment file to build the container
 	cd docker/nginx-php && $(MAKE) env-set
 
-laravel-build: ## builds the Laravel PHP container from Docker image
-	cd docker/nginx-php && $(MAKE) build
+laravel-create: ## creates the Laravel PHP container from Docker image
+	cd docker/nginx-php && $(MAKE) build up
 
-laravel-start: ## starts up the Laravel PHP container running
+laravel-start: ## starts the Laravel PHP container running
 	cd docker/nginx-php && $(MAKE) start
 
 laravel-stop: ## stops the Laravel PHP container but data won't be destroyed
@@ -60,60 +60,11 @@ laravel-stop: ## stops the Laravel PHP container but data won't be destroyed
 laravel-destroy: ## removes the Laravel PHP from Docker network destroying its data and Docker image
 	cd docker/nginx-php && $(MAKE) clear destroy
 
-# -------------------------------------------------------------------------------------------------
-#  Database Service
-# -------------------------------------------------------------------------------------------------
-.PHONY: database-ssh database-set database-build database-start database-stop database-destroy database-replace database-backup
+laravel-install: ## installs set version of Laravel into container
+	cd docker/nginx-php && $(MAKE) app-install
 
-database-ssh: ## enters the database container shell
-	cd docker/mariadb && $(MAKE) ssh
-
-database-set: ## sets the database enviroment file to build the container
-	cd docker/mariadb && $(MAKE) env-set
-
-database-build: ## builds the database container from Docker image
-	cd docker/mariadb && $(MAKE) build
-
-database-start: ## starts up the database container running
-	cd docker/mariadb && $(MAKE) up
-
-database-stop: ## stops the database container but data won't be destroyed
-	cd docker/mariadb && $(MAKE) stop
-
-database-destroy: ## stops and removes the database container from Docker network destroying its data
-	cd docker/mariadb && $(MAKE) stop clear
-
-database-install: ## installs an initialized database copying the determined .sql file into the container by raplacing it
-	cd docker/mariadb && $(MAKE) sql-install
-	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database has been "${C_GRN}"installed."${C_END};
-
-database-replace: ## replaces container database copying the determined .sql file into the container by raplacing it
-	cd docker/mariadb && $(MAKE) sql-replace
-	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database has been "${C_GRN}"replaced."${C_END};
-
-database-backup: ## creates a .sql file from container database to the determined local host directory
-	cd docker/mariadb && $(MAKE) sql-backup
-	echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" database "${C_GRN}"backup has been created."${C_END};
-
-# -------------------------------------------------------------------------------------------------
-#  Laravel & Database
-# -------------------------------------------------------------------------------------------------
-.PHONY: project-set project-build project-start project-stop project-destroy
-
-project-set: ## sets both Laravel and database .env files used by docker-compose.yml
-	$(MAKE) laravel-set database-set
-
-project-build: ## builds both Laravel and database containers from their Docker images
-	$(MAKE) laravel-set database-set database-build laravel-build
-
-project-start: ## starts up both Laravel and database containers running
-	$(MAKE) database-start laravel-start
-
-project-stop: ## stops both Laravel and database containers but data won't be destroyed
-	$(MAKE) database-stop laravel-stop
-
-project-destroy: ## stops and removes both Laravel and database containers from Docker network destroying their data
-	$(MAKE) database-destroy laravel-destroy
+laravel-update: ## updates set version of Laravel into container
+	cd docker/nginx-php && $(MAKE) app-update
 
 # -------------------------------------------------------------------------------------------------
 #  Repository Helper

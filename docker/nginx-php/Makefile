@@ -39,7 +39,7 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 .PHONY: port-check
 
-port-check: ## shows this project ports availability on local machine
+port-check: ## shows this project port availability on local machine
 	echo "Checking configuration for "${C_YEL}"$(DOCKER_TITLE)"${C_END}" container:";
 	if [ -z "$$($(DOCKER_USER) lsof -i :$(DOCKER_PORT))" ]; then \
 		echo ${C_BLU}"$(DOCKER_TITLE)"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
@@ -73,42 +73,44 @@ env-set: ## sets docker .env file
 # -------------------------------------------------------------------------------------------------
 .PHONY: ssh build install-app update-app dev up start first stop restart clear
 
-ssh:
+ssh: ## enters the Symfony container shell
 	$(DOCKER_EXEC_TOOLS_APP)
 
-build:
+build: ## builds the container from Dockerfile
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
-dev:
-	echo ${C_YEL}"\"dev\" recipe has not usage in this project"${C_END};
-
-up:
+up: ## attaches to containers for a service and also starts any linked services
 	cd docker && $(DOCKER_COMPOSE) up -d
 
-start:
-	$(MAKE) up
+start: ## starts the container running
+	cd docker && $(DOCKER_COMPOSE) start
 
-stop:
+stop: ## stops the container running - data won't be destroyed
 	cd docker && $(DOCKER_COMPOSE) stop
 
-restart:
+restart: ## execute this Makefile "stop" & "start" recipes
 	$(MAKE) stop start
 
-clear:
+clear: ## removes container from Docker running containers
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
 
-destroy:
+destroy: ## delete container image from Docker - Doker prune commands still needed to be applied manually
 	cd docker && $(DOCKER_USER) docker rmi $(DOCKER_CAAS):$(DOCKER_ABBR)-nginx-php
+
+dev: ## set a development enviroment
+	echo ${C_YEL}"\"dev\" recipe has not usage in this project"${C_END};
 
 # -------------------------------------------------------------------------------------------------
 #  Container Application
 # -------------------------------------------------------------------------------------------------
-app-install:
+.PHONY: app-install app-update
+
+app-install: ## installs the application an dependencies packages
 	$(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
 
-app-update:
+app-update: ## updates dependencies packages
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_UPDATE)
 
 # -------------------------------------------------------------------------------------------------
@@ -116,11 +118,11 @@ app-update:
 # -------------------------------------------------------------------------------------------------
 .PHONY: nginx-conf php-conf php-fpm-conf
 
-nginx-conf:
+nginx-conf: ## updates any configuration NGINX changes while container is running
 	$(DOCKER_USER) docker run -v "`pwd`/nginx-server.conf:/etc/nginx/conf.d/server.conf" $(DOCKER_CAAS):$(DOCKER_ABBR)-nginx-php
 
-php-conf:
+php-conf: ## updates any configuration PHP changes while container is running
 	$(DOCKER_USER) docker run -v "`pwd`/php-setting.ini:/etc/php83/conf.d/settings.ini" $(DOCKER_CAAS)
 
-php-fpm-conf:
+php-fpm-conf: ## updates any configuration PHP-FPM changes while container is running
 	$(DOCKER_USER) docker run -v "`pwd`/php-fpm-settings.conf:/etc/php83/php-fpm.d/server.conf" $(DOCKER_CAAS)
