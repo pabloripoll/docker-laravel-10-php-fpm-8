@@ -324,25 +324,30 @@ GET: http://localhost:8888/api/v1/health/db
 }
 ```
 
-Open [laravel/.env](laravel/.env) file and set the selected database type connection params.
-
-It can be used the repository: [https://github.com/pabloripoll/docker-mariadb-10.11](https://github.com/pabloripoll/docker-mariadb-10.11)
-
-Complete the MySQL database connection params. Use local hostname IP `$ make hostname` to set `DB_HOST` variable
-```
-DB_CONNECTION=mysql
-DB_HOST=192.168.1.41
-DB_PORT=
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
-```
-
-Checking the connection to database once is set correctly will response as follows
+When a proper connection is set, endpoint will response as follow
 ```
 GET: http://localhost:8888/api/v1/health/db
 
 {
     "status": true
 }
+```
+
+## Custom Database Service
+
+In case of using the repository [https://github.com/pabloripoll/docker-mariadb-10.11](https://github.com/pabloripoll/docker-mariadb-10.11) as database service, complete the application mysql database connection params in [laravel/.env](laravel/.env) file.
+
+Use local hostname IP `$ make hostname` to set `DB_HOST` variable
+```
+DB_CONNECTION=mysql
+DB_HOST=192.168.1.41
+DB_PORT=8880
+DB_DATABASE=mariadb
+DB_USERNAME=mariadb
+DB_PASSWORD=123456
+```
+
+Migration has to be performed inside container. Access container with the following recipe:
+```bash
+$ make laravel-ssh
 ```
