@@ -6,7 +6,7 @@
 
 # Docker Laravel 10 with PHP FPM 8+
 
-The objective of this repository is having a CaaS [Containers as a Service](https://www.ibm.com/topics/containers-as-a-service) to provide a "ready to use" container with the basic enviroment features to deploy a [Laravel](https://laravel.com/) application service under a lightweight Linux image with Nginx server platform and [PHP-FPM](https://www.php.net/manual/en/install.fpm.php) development stage requirements.
+The objective of this repository is having a CaaS [Containers as a Service](https://www.ibm.com/topics/containers-as-a-service) to provide a "ready to use" container with the basic enviroment features to deploy a [Laravel](https://laravel.com/) application service under a lightweight Linux image with Nginx server platform and [PHP-FPM](https://www.php.net/manual/en/install.fpm.php) for development stage requirements.
 
 The container configuration is as [Host Network](https://docs.docker.com/network/drivers/host/) on `eth0` as [Bridge network](https://docs.docker.com/network/drivers/bridge/), thus it can be accessed through `localhost:${PORT}` by browsers but to connect with it or this with other services `${HOSTNAME}:${PORT}` will be required.
 
