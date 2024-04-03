@@ -24,7 +24,7 @@ The container configuration is as [Host Network](https://docs.docker.com/network
 
 This project does not include a database service for it is intended to connect to a database instance like in a cloud database environment or similar.
 
-To emmulate a SQL database service it can be used the following [MariaDB 10.11](https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/) repository:
+To emulate a SQL database service it can be used the following [MariaDB 10.11](https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/) repository:
 - [https://github.com/pabloripoll/docker-mariadb-10.11](https://github.com/pabloripoll/docker-mariadb-10.11)
 
 ### Project objetives with Docker
