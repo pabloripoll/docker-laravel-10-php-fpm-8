@@ -12,7 +12,7 @@ The connection between container is as [Host Network](https://docs.docker.com/ne
 
 As client end user both services can be accessed through `localhost:${PORT}` but the connection between containers is through the `${HOSTNAME}:${PORT}`.
 
-### Laravel Docker Container Service
+### Laravel Container Service
 
 - [Laravel 10](https://laravel.com/docs/10.x/releases)
 
@@ -22,9 +22,11 @@ As client end user both services can be accessed through `localhost:${PORT}` but
 
 - [Alpine Linux 3.19](https://www.alpinelinux.org/)
 
-### Database Container Service
+### Database Service
 
-To connect this service to a SQL database, it can be used the following [MariaDB 10.11](https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/) service:
+This project does not include a database service for it is intended to connect to a database instance like in a cloud database environment or similar.
+
+To emmulate a SQL database service it can be used the following [MariaDB 10.11](https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/) repository:
 - [https://github.com/pabloripoll/docker-mariadb-10.11](https://github.com/pabloripoll/docker-mariadb-10.11)
 
 ### Project objetives with Docker
