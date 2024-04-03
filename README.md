@@ -292,11 +292,13 @@ $ sudo docker system prune
 Total reclaimed space: 0MB
 ```
 
-## Check Laravel status
+## Laravel Service Check
 
-Visiting `http://localhost:8888/` should display Laravel's welcome page.
+There are two PHP files on [resources/laravel](resources/laravel) with same structure as application to replace or add a predifined example to test the service.
 
-Use an API platform *(Postman, Firefox RESTClient, etc..)* to check connection with Laravel
+It can be used an API platform service *(Postman, Firefox RESTClient, etc..)* or just browsing the following endpoints to check connection with Laravel.
+
+Check-out a basic service check
 ```
 GET: http://localhost:8888/api/v1/health
 
@@ -305,9 +307,7 @@ GET: http://localhost:8888/api/v1/health
 }
 ```
 
-## Check Laravel database connection
-
-Check connection to database through a test endpoint. If conenction params are not set already will response as follows
+Check connection to database through this endpoint. If conenction params are not set already or does not exist, endpoint response will be as follow
 ```
 GET: http://localhost:8888/api/v1/health/db
 
@@ -324,14 +324,18 @@ GET: http://localhost:8888/api/v1/health/db
 }
 ```
 
+Open [laravel/.env](laravel/.env) file and set the selected database type connection params.
+
+It can be used the repository: [https://github.com/pabloripoll/docker-mariadb-10.11](https://github.com/pabloripoll/docker-mariadb-10.11)
+
 Complete the MySQL database connection params. Use local hostname IP `$ make hostname` to set `DB_HOST` variable
 ```
 DB_CONNECTION=mysql
 DB_HOST=192.168.1.41
-DB_PORT=8889
-DB_DATABASE=laravel
-DB_USERNAME=laravel
-DB_PASSWORD=123456
+DB_PORT=
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
 ```
 
 Checking the connection to database once is set correctly will response as follows
