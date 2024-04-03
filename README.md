@@ -129,88 +129,167 @@ $ make help
 usage: make [target]
 
 targets:
-Makefile  help                     shows this Makefile help message
-Makefile  hostname                 shows local machine ip
-Makefile  fix-permission           sets project directory permission
-Makefile  ports-check              shows this project ports availability on local machine
-Makefile  laravel-ssh              enters the Laravel container shell
-Makefile  laravel-set              sets the Laravel PHP enviroment file to build the container
-Makefile  laravel-build            builds the Laravel PHP container from Docker image
-Makefile  laravel-start            starts up the Laravel PHP container running
-Makefile  laravel-stop             stops the Laravel PHP container but data will not be destroyed
-Makefile  laravel-destroy          stops and removes the Laravel PHP container from Docker network destroying its data
-Makefile  repo-flush               clears local git repository cache specially to update .gitignore
+Makefile  help                   shows this Makefile help message
+Makefile  hostname               shows local machine ip
+Makefile  fix-permission         sets project directory permission
+Makefile  host-check             shows this project ports availability on local machine
+Makefile  laravel-ssh            enters the Laravel container shell
+Makefile  laravel-set            sets the Laravel PHP enviroment file to build the container
+Makefile  laravel-create         creates the Laravel PHP container from Docker image
+Makefile  laravel-start          starts the Laravel PHP container running
+Makefile  laravel-stop           stops the Laravel PHP container but data will not be destroyed
+Makefile  laravel-destroy        removes the Laravel PHP from Docker network destroying its data and Docker image
+Makefile  laravel-install        installs set version of Laravel into container
+Makefile  laravel-update         updates set version of Laravel into container
+Makefile  repo-flush             clears local git repository cache specially to update .gitignore
 ```
 
-Checkout local machine ports availability
+## Service Configuration
+
+Create a [DOTENV](.env) file from [.env.example](.env.example) and setup according to your project requirement the following variables
+```
+# REMOVE COMMENTS WHEN COPY THIS FILE
+
+# Leave it empty if no need for sudo user to execute docker commands
+DOCKER_USER=sudo
+
+# Container data for docker-compose.yml
+PROJECT_TITLE="Laravel"   # <- this name will be prompt for Makefile recipes
+PROJECT_ABBR="laravel"    # <- part of the service image tag - useful if similar services are running
+
+# Laravel container
+PROJECT_HOST="127.0.0.1"                    # <- for this project is not necessary
+PROJECT_PORT="8888"                         # <- port access container service on local machine
+PROJECT_CAAS="laravel-app"                  # <- container as a service name to build service
+PROJECT_PATH="../../../laravel"             # <- path where application is binded from container to local
+PROJECT_DB_PATH="../../resources/database/" # <- path where database backup or copy resides
+```
+
+Exacute the following command to create the [docker/.env](docker/.env) file, required for building the container
 ```bash
-$ make ports-check
+$ make laravel-set
+Laravel docker-compose.yml .env file has been set.
+```
+
+Checkout port availability from enviroment set
+```bash
+$ make host-check
 
 Checking configuration for Laravel container:
 Laravel > port:8888 is free to use.
 ```
 
-Checkout local machine IP to set connection between containers using the following makefile recipe
+Checkout local machine IP to set connection between container services using the following makefile recipe if required
 ```bash
 $ make hostname
 
 192.168.1.41
 ```
 
-## Build the project
+## Create the Container Service
 
 ```bash
-$ make project-build
+$ make laravel-create
 
 LARAVEL docker-compose.yml .env file has been set.
 
-[+] Building 49.7s (25/25)                                             docker:default
- => [wordpress internal] load build definition from Dockerfile         0.0s
- => => transferring dockerfile: 2.47kB
+[+] Building 54.3s (26/26) FINISHED                                                 docker:default
+=> [nginx-php internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 2.78kB                                              0.0s
+ => [nginx-php internal] load metadata for docker.io/library/composer:latest        1.5s
+ => [nginx-php internal] load metadata for docker.io/library/php:8.3-fpm-alpine     1.5s
+ => [nginx-php internal] load .dockerignore                                         0.0s
+ => => transferring context: 108B                                                   0.0s
+ => [nginx-php internal] load build context                                         0.0s
+ => => transferring context: 8.30kB                                                 0.0s
+ => [nginx-php] FROM docker.io/library/composer:latest@sha256:63c0f08ca41370...
 ...
-=> => naming to docker.io/library/lara-app:php-8.3                     0.0s
+ => [nginx-php] exporting to image                                                  1.0s
+ => => exporting layers                                                             1.0s
+ => => writing image sha256:3c99f91a63edd857a0eaa13503c00d500fad57cf5e29ce1d...     0.0s
+ => => naming to docker.io/library/laravel-app:laravel-nginx-php                    0.0s
 [+] Running 1/2
- ⠇ Network lara-app_default  Created                                   0.8s
- ✔ Container lara-app        Started
+ ⠴ Network laravel-app_default  Created                                             0.4s
+ ✔ Container laravel-app        Started                                             0.3s
+[+] Running 1/0
+ ✔ Container laravel-app        Running
 ```
 
-## Running the project
+If container service has been built with the application content completed, accessing by browsing [http://localhost:8888/](http://localhost:8888/) will display the successful installation welcome page.
 
+If container has been built without application, the following Makefile recipe will install the application that is configure in [docker/nginx-php/Makefile](docker/nginx-php/Makefile) service
 ```bash
-$ make project-start
+$ make laravel-install
+```
 
-[+] Running 1/0
- ✔ Container lara-app  Running                      0.0s
- ```
+If container has been built with the application copy from repository, the following Makefile recipe will update the application dependencies
+```bash
+$ make laravel-update
+```
 
-Now, Laravel should be available on local machine by visiting [http://localhost:8888/](http://localhost:8888/)
+## Container Information
 
-
-## Docker Info
-
-Docker container
+Running container on Docker
 ```bash
 $ sudo docker ps -a
 CONTAINER ID   IMAGE      COMMAND    CREATED      STATUS      PORTS                                             NAMES
-ecd27aeae010   lara...    "docker-php-entrypoi…"   3 mins...   9000/tcp, 0.0.0.0:8888->80/tcp, :::8888->80/tcp  laravel-app
-
+ecd27aeae010   lara...    "docker-php-entrypoi…"  1 min...    9000/tcp, 0.0.0.0:8888->80/tcp, :::8888->80/tcp   laravel-app
 ```
 
-Docker image
+Docker image size
 ```bash
 $ sudo docker images
 REPOSITORY   TAG           IMAGE ID       CREATED         SIZE
-laravel-app  lara...       373f6967199b   5 minutes ago   200MB
+laravel-app  lara...       373f6967199b   5 minutes ago   251MB
 ```
 
-Docker stats
+Stats regarding the amount of disk space used by the container
 ```bash
 $ sudo docker system df
 TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
-Images          1         1         532.2MB   0B (0%)
-Containers      1         1         25.03kB   0B (0%)
+Images          1         1         251.4MB   0B (0%)
+Containers      1         1         4B        0B (0%)
 Local Volumes   1         0         117.9MB   117.9MB (100%)
-Build Cache     39        0         10.21kB   10.21kB
+Build Cache     39        0         10.56kB   10.56kB
+```
+
+## Stopping the Container Service
+
+Using the following Makefile recipe stops application from running, keeping database persistance and application files binded without any loss
+```bash
+$ make laravel-stop
+[+] Stopping 1/1
+ ✔ Container laravel-app  Stopped                                                    0.5s
+```
+
+## Removing the Container Image
+
+To remove application container from Docker network use the following Makefile recipe *(Docker prune commands still needed to be applied manually)*
+```bash
+$ make laravel-destroy
+
+[+] Removing 1/0
+ ✔ Container laravel-app  Removed                                                     0.0s
+[+] Running 1/1
+ ✔ Network laravel-app_default  Removed                                               0.4s
+Untagged: laravel-app:laravel-nginx-php
+Deleted: sha256:3c99f91a63edd857a0eaa13503c00d500fad57cf5e29ce1da3210765259c35b1
+```
+
+Information on pruning Docker system cache
+```bash
+$ sudo docker system prune
+
+...
+Total reclaimed space: 168.4MB
+```
+
+Information on pruning Docker volume cache
+```bash
+$ sudo docker system prune
+
+...
+Total reclaimed space: 0MB
 ```
 
 ## Check Laravel status
@@ -262,48 +341,4 @@ GET: http://localhost:8888/api/v1/health/db
 {
     "status": true
 }
-```
-
-## Stop Containers
-
-Using the following Makefile recipe stops application and database containers, keeping database persistance and application files binded without any loss
-```bash
-$ make laravel-stop
-
-[+] Killing 1/1
- ✔ Container laravel-app  Killed              0.5s
-Going to remove laravel-app
-[+] Removing 1/0
- ✔ Container laravel-app  Removed             0.0s
-```
-
-## Remove Containers
-
-To stop and remove both application and database containers from docker network use the following Makefile recipe
-```bash
-$ make laravel-destroy
-
-[+] Killing 1/1
- ✔ Container laravel-app  Killed                   0.4s
-Going to remove laravel-app
-[+] Removing 1/0
- ✔ Container laravel-app  Removed                  0.0s
-[+] Running 1/1
- ✔ Network laravel-app_default  Removed
-```
-
-Prune Docker system cache
-```bash
-$ sudo docker system prune
-
-...
-Total reclaimed space: 423.4MB
-```
-
-Prune Docker volume cache
-```bash
-$ sudo docker system prune
-
-...
-Total reclaimed space: 50.7MB
 ```

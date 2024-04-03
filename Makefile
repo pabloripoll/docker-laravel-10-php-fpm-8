@@ -49,12 +49,12 @@ laravel-set: ## sets the Laravel PHP enviroment file to build the container
 	cd docker/nginx-php && $(MAKE) env-set
 
 laravel-create: ## creates the Laravel PHP container from Docker image
-	cd docker/nginx-php && $(MAKE) build up
+	cd docker/nginx-php && $(MAKE) env-set build up
 
 laravel-start: ## starts the Laravel PHP container running
 	cd docker/nginx-php && $(MAKE) start
 
-laravel-stop: ## stops the Laravel PHP container but data won't be destroyed
+laravel-stop: ## stops the Laravel PHP container but data will not be destroyed
 	cd docker/nginx-php && $(MAKE) stop
 
 laravel-destroy: ## removes the Laravel PHP from Docker network destroying its data and Docker image

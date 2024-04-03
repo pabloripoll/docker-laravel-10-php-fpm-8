@@ -96,7 +96,7 @@ clear: ## removes container from Docker running containers
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
 
-destroy: ## delete container image from Docker - Doker prune commands still needed to be applied manually
+destroy: ## delete container image from Docker - Docker prune commands still needed to be applied manually
 	cd docker && $(DOCKER_USER) docker rmi $(DOCKER_CAAS):$(DOCKER_ABBR)-nginx-php
 
 dev: ## set a development enviroment
