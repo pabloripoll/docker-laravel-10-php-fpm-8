@@ -351,3 +351,56 @@ Migration has to be performed inside container. Access container with the follow
 ```bash
 $ make laravel-ssh
 ```
+
+### Dumping Database
+
+Every time the containers are built up and running it will be like start from a fresh installation.
+
+You can continue using this repository with the pre-set database executing the command `$ make database-install`
+
+Follow the next recommendations to keep development stages clear and safe.
+
+*On first installation* once Laravel app is running with an admin back-office user set, I suggest to make a initialization database backup manually, saving as [resources/database/laravel-backup.sql](resources/database/laravel-backup.sql) but renaming as [resources/database/laravel-init.sql](resources/database/laravel-init.sql) to have that init database for any Docker compose rebuild / restart on next time.
+
+**The following three commands are very useful for *Continue Development*.**
+
+### DB Backup
+
+When the project is already in an advanced development stage, making a backup is recommended to keep lastest database registers.
+```bash
+$ make database-backup
+
+DATABASE backup has been created.
+```
+
+### DB Install
+
+If it is needed to restart the project from base installation step, you can use the init database .sql file to restart at that point in time. Although is not common to use, helps to check and test installation health.
+```bash
+$ make database-install
+
+DATABASE has been installed.
+```
+
+This repository comes with an initialized .sql with a main database user. See [.env.example](.env.example)
+
+### DB Replace
+
+Replace the database set on container with the latest .sql backup into current development stage.
+```bash
+$ make database-replace
+
+DATABASE has been replaced.
+```
+
+#### Notes
+
+- Notice that both files in [resources/database/](resources/database/) have the database name that has been set on the main `.env` file to automate processes.
+
+- Remember that on any change in the main `.env` file will be necessary to execute the following Makefile recipe
+```bash
+$ make project-set
+
+LARAVEL docker-compose.yml .env file has been set.
+LARAVEL DB docker-compose.yml .env file has been set.
+```
