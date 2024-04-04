@@ -25,8 +25,8 @@ DOCKER_COMPOSE?=$(DOCKER_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
 DOCKER_EXEC_TOOLS_APP=$(DOCKER_USER) docker exec -it $(DOCKER_CAAS) sh
 
-COMPOSER_UPDATE="composer update"
-COMPOSER_INSTALL="composer create-project laravel/laravel:^10.0 ."
+APPLICATION_UPDATE="composer update"
+APPLICATION_INSTALL="composer create-project laravel/laravel:^10.0 ."
 
 help: ## shows this Makefile help message
 	echo 'usage: make [target]'
@@ -108,10 +108,10 @@ dev: ## set a development enviroment
 .PHONY: app-install app-update
 
 app-install: ## installs the application an dependencies packages
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(APPLICATION_INSTALL)
 
 app-update: ## updates dependencies packages
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_UPDATE)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(APPLICATION_UPDATE)
 
 # -------------------------------------------------------------------------------------------------
 #  Container update on the run
