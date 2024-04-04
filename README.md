@@ -395,12 +395,11 @@ DATABASE has been replaced.
 
 #### Notes
 
-- Notice that both files in [resources/database/](resources/database/) have the database name that has been set on the main `.env` file to automate processes.
+- Notice that both files in [resources/database/](resources/database/) have the name that has been set on the main `.env` file to automate processes.
 
-- Remember that on any change in the main `.env` file will be necessary to execute the following Makefile recipe
+- Remember that on any change in the main `.env` file will be required to execute the following Makefile recipe
 ```bash
-$ make project-set
+$ make laravel-set
 
 LARAVEL docker-compose.yml .env file has been set.
-LARAVEL DB docker-compose.yml .env file has been set.
 ```
