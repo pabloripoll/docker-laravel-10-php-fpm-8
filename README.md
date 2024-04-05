@@ -369,7 +369,7 @@ You can continue using this repository with the pre-set database executing the c
 
 Follow the next recommendations to keep development stages clear and safe.
 
-*On first installation* once Laravel app is running with an admin back-office user set, I suggest to make a initialization database backup manually, saving as [resources/database/laravel-backup.sql](resources/database/laravel-backup.sql) but renaming as [resources/database/laravel-init.sql](resources/database/laravel-init.sql) to have that init database for any Docker compose rebuild / restart on next time.
+*On first installation* once the app service is running with basic tables set, I suggest to make a initialization database backup manually, saving as [resources/database/laravel-backup.sql](resources/database/laravel-backup.sql) but renaming as [resources/database/laravel-init.sql](resources/database/laravel-init.sql) to have that init database for any Docker compose rebuild / restart on next time.
 
 **The following three commands are very useful for *Continue Development*.**
 
