@@ -38,32 +38,32 @@ host-check: ## shows this project ports availability on local machine
 	cd docker/nginx-php && $(MAKE) port-check
 
 # -------------------------------------------------------------------------------------------------
-#  Laravel Service
+#  Application Service
 # -------------------------------------------------------------------------------------------------
 .PHONY: laravel-ssh laravel-set laravel-create laravel-start laravel-stop laravel-destroy laravel-install laravel-update
 
-laravel-ssh: ## enters the Laravel container shell
+laravel-ssh: ## enters the application container shell
 	cd docker/nginx-php && $(MAKE) ssh
 
-laravel-set: ## sets the Laravel PHP enviroment file to build the container
+laravel-set: ## sets the application PHP enviroment file to build the container
 	cd docker/nginx-php && $(MAKE) env-set
 
-laravel-create: ## creates the Laravel PHP container from Docker image
+laravel-create: ## creates the application PHP container from Docker image
 	cd docker/nginx-php && $(MAKE) env-set build up
 
-laravel-start: ## starts the Laravel PHP container running
+laravel-start: ## starts the application PHP container running
 	cd docker/nginx-php && $(MAKE) start
 
-laravel-stop: ## stops the Laravel PHP container but data will not be destroyed
+laravel-stop: ## stops the application PHP container but data will not be destroyed
 	cd docker/nginx-php && $(MAKE) stop
 
-laravel-destroy: ## removes the Laravel PHP from Docker network destroying its data and Docker image
+laravel-destroy: ## removes the application PHP from Docker network destroying its data and Docker image
 	cd docker/nginx-php && $(MAKE) clear destroy
 
-laravel-install: ## installs set version of Laravel into container
+laravel-install: ## installs the application pre-defined version with its dependency packages into container
 	cd docker/nginx-php && $(MAKE) app-install
 
-laravel-update: ## updates set version of Laravel into container
+laravel-update: ## updates the application dependency packages into container
 	cd docker/nginx-php && $(MAKE) app-update
 
 # -------------------------------------------------------------------------------------------------
