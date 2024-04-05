@@ -157,7 +157,7 @@ Create a [DOTENV](.env) file from [.env.example](.env.example) and setup accordi
 DOCKER_USER=sudo
 
 # Container data for docker-compose.yml
-PROJECT_TITLE="Laravel"   # <- this name will be prompt for Makefile recipes
+PROJECT_TITLE="LARAVEL"   # <- this name will be prompt for Makefile recipes
 PROJECT_ABBR="laravel"    # <- part of the service image tag - useful if similar services are running
 
 # Laravel container
@@ -165,21 +165,27 @@ PROJECT_HOST="127.0.0.1"                    # <- for this project is not necessa
 PROJECT_PORT="8888"                         # <- port access container service on local machine
 PROJECT_CAAS="laravel-app"                  # <- container as a service name to build service
 PROJECT_PATH="../../../laravel"             # <- path where application is binded from container to local
-PROJECT_DB_PATH="../../resources/database/" # <- path where database backup or copy resides
+
+# Database service container
+DB_CAAS="mariadb"                           # <- name of the database docker container service to access by ssh
+DB_NAME="mariadb"                           # <- name of the database to copy or replace
+DB_ROOT="7c4a8d09ca3762af61e59520943d"      # <- database root password
+DB_BACKUP_NAME="laravel"                    # <- the name of the database backup or copy file
+DB_BACKUP_PATH="resources/database"         # <- path where database backup or copy resides
 ```
 
 Exacute the following command to create the [docker/.env](docker/.env) file, required for building the container
 ```bash
 $ make laravel-set
-Laravel docker-compose.yml .env file has been set.
+LARAVEL docker-compose.yml .env file has been set.
 ```
 
-Checkout port availability from enviroment set
+Checkout port availability from the set enviroment
 ```bash
 $ make host-check
 
-Checking configuration for Laravel container:
-Laravel > port:8888 is free to use.
+Checking configuration for LARAVEL container:
+LARAVEL > port:8888 is free to use.
 ```
 
 Checkout local machine IP to set connection between container services using the following makefile recipe if required
