@@ -195,7 +195,7 @@ $ make hostname
 192.168.1.41
 ```
 
-## Create the Container Service
+## Create the application container service
 
 ```bash
 $ make laravel-create
