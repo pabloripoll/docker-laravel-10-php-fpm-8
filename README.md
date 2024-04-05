@@ -301,7 +301,7 @@ $ sudo docker system prune
 Total reclaimed space: 0MB
 ```
 
-## Laravel Service Check
+## Laravel service check
 
 There are two PHP files on [resources/laravel](resources/laravel) with same structure as application to replace or add a predifined example to test the service.
 
