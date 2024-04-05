@@ -129,19 +129,22 @@ $ make help
 usage: make [target]
 
 targets:
-Makefile  help                   shows this Makefile help message
-Makefile  hostname               shows local machine ip
-Makefile  fix-permission         sets project directory permission
-Makefile  host-check             shows this project ports availability on local machine
-Makefile  laravel-ssh            enters the Laravel container shell
-Makefile  laravel-set            sets the Laravel PHP enviroment file to build the container
-Makefile  laravel-create         creates the Laravel PHP container from Docker image
-Makefile  laravel-start          starts the Laravel PHP container running
-Makefile  laravel-stop           stops the Laravel PHP container but data will not be destroyed
-Makefile  laravel-destroy        removes the Laravel PHP from Docker network destroying its data and Docker image
-Makefile  laravel-install        installs set version of Laravel into container
-Makefile  laravel-update         updates set version of Laravel into container
-Makefile  repo-flush             clears local git repository cache specially to update .gitignore
+Makefile  help                    shows this Makefile help message
+Makefile  hostname                shows local machine ip
+Makefile  fix-permission          sets project directory permission
+Makefile  host-check              shows this project ports availability on local machine
+Makefile  laravel-ssh             enters the application container shell
+Makefile  laravel-set             sets the application PHP enviroment file to build the container
+Makefile  laravel-create          creates the application PHP container from Docker image
+Makefile  laravel-start           starts the application PHP container running
+Makefile  laravel-stop            stops the application PHP container but data will not be destroyed
+Makefile  laravel-destroy         removes the application PHP from Docker network destroying its data and Docker image
+Makefile  laravel-install         installs the application pre-defined version with its dependency packages into container
+Makefile  laravel-update          updates the application dependency packages into container
+Makefile  database-install        installs into container database the init sql file from resources/database
+Makefile  database-replace        replaces container database with the latest sql backup file from resources/database
+Makefile  database-backup         creates / replace a sql backup file from container database in resources/database
+Makefile  repo-flush              clears local git repository cache specially to update .gitignore
 ```
 
 ## Service Configuration
