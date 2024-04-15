@@ -228,7 +228,7 @@ DB_BACKUP_NAME="laravel"                    # <- the name of the database backup
 DB_BACKUP_PATH="resources/database"         # <- path where database backup or copy resides
 ```
 
-*(Database service container is explained [below](https://github.com/pabloripoll/docker-symfony-6-php-fpm-8?tab=readme-ov-file#custom-database-service-usage))*
+*(Database service container is explained [below](#custom-database-service-usage))*
 
 Exacute the following command to create the [docker/.env](docker/.env) file, required for building the container
 ```bash
