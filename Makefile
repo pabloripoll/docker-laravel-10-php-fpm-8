@@ -10,8 +10,6 @@ C_END='\033[0m'
 
 include .env
 
-DOCKER_TITLE=$(PROJECT_TITLE)
-
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
@@ -27,69 +25,85 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 .PHONY: hostname fix-permission host-check
 
-hostname: ## shows local machine ip
-	echo $(word 1,$(shell hostname -I))
-	echo $(ip addr show | grep "\binet\b.*\bdocker0\b" | awk '{print $2}' | cut -d '/' -f 1)
+hostname: ## shows local machine ip and container ports set
+	echo "Containers address"
+	echo ${C_BLU}"LOCAL: "${C_END}"http://$(word 1,$(shell hostname -I))"
+	echo ${C_BLU}"BACKEND: "${C_END}"http://$(word 1,$(shell hostname -I)):"$(BACKEND_PORT)
+	echo ${C_BLU}"DATABASE: "${C_END}"http://$(word 1,$(shell hostname -I)):"$(DATABASE_PORT)
+
+hostcheck: ## shows this project ports availability on local machine
+	cd infrastructure/$(DATABASE) && $(MAKE) port-check
+	cd infrastructure/nginx-php && $(MAKE) port-check
 
 fix-permission: ## sets project directory permission
 	$(DOCKER_USER) chown -R ${USER}: $(ROOT_DIR)/
 
-host-check: ## shows this project ports availability on local machine
-	cd docker/nginx-php && $(MAKE) port-check
-
 # -------------------------------------------------------------------------------------------------
 #  Application Service
 # -------------------------------------------------------------------------------------------------
-.PHONY: laravel-ssh laravel-set laravel-create laravel-start laravel-stop laravel-destroy laravel-install laravel-update
+.PHONY: project-set project-create project-start project-stop project-destroy
 
-laravel-ssh: ## enters the application container shell
-	cd docker/nginx-php && $(MAKE) ssh
+project-set: ## sets the project enviroment file to build the container
+	cd infrastructure/$(DATABASE) && $(MAKE) env-set
+	cd infrastructure/nginx-php && $(MAKE) env-set
 
-laravel-set: ## sets the application PHP enviroment file to build the container
-	cd docker/nginx-php && $(MAKE) env-set
+project-create: ## creates the project container from Docker image
+	cd infrastructure/$(DATABASE) && $(MAKE) env-set build up
+	cd infrastructure/nginx-php && $(MAKE) env-set build up
 
-laravel-create: ## creates the application PHP container from Docker image
-	cd docker/nginx-php && $(MAKE) env-set build up
+project-start: ## starts the project container running
+	cd infrastructure/$(DATABASE) && $(MAKE) start
+	cd infrastructure/nginx-php && $(MAKE) start
 
-laravel-start: ## starts the application PHP container running
-	cd docker/nginx-php && $(MAKE) start
+project-stop: ## stops the project container but its assets will not be destroyed
+	cd infrastructure/$(DATABASE) && $(MAKE) stop
+	cd infrastructure/nginx-php && $(MAKE) stop
 
-laravel-stop: ## stops the application PHP container but data will not be destroyed
-	cd docker/nginx-php && $(MAKE) stop
-
-laravel-destroy: ## removes the application PHP from Docker network destroying its data and Docker image
-	cd docker/nginx-php && $(MAKE) clear destroy
-
-laravel-install: ## installs the application pre-defined version with its dependency packages into container
-	cd docker/nginx-php && $(MAKE) app-install
-
-laravel-update: ## updates the application dependency packages into container
-	cd docker/nginx-php && $(MAKE) app-update
+project-destroy: ## removes the project from Docker network destroying its assets and Docker image
+	cd infrastructure/$(DATABASE) && $(MAKE) clear destroy
+	cd infrastructure/nginx-php && $(MAKE) clear destroy
 
 # -------------------------------------------------------------------------------------------------
-#  Database Container Service
+#  Backend Service
 # -------------------------------------------------------------------------------------------------
-.PHONY: database-install database-replace database-backup
+.PHONY: backend-ssh backend-update
+
+backend-ssh: ## enters the backend container shell
+	cd infrastructure/nginx-php && $(MAKE) ssh
+
+backend-update: ## updates the backend set version into container
+	cd infrastructure/nginx-php && $(MAKE) app-update
+
+# -------------------------------------------------------------------------------------------------
+#  Database Service
+# -------------------------------------------------------------------------------------------------
+.PHONY: database-ssh database-install database-replace database-backup
+
+database-ssh: ## enters the backend container shell
+	cd infrastructure/$(DATABASE) && $(MAKE) ssh
 
 database-install: ## installs into container database the init sql file from resources/database
-	sudo docker exec -i $(DB_CAAS) sh -c 'exec mysql $(DB_NAME) -uroot -p"$(DB_ROOT)"' < $(DB_BACKUP_PATH)/$(DB_BACKUP_NAME)-init.sql
+	sudo docker exec -i $(DATABASE_CAAS) sh -c 'exec mysql $(DATABASE_NAME) -uroot -p"$(DATABASE_ROOT)"' < $(DATABASE_PATH)$(DATABASE_INIT)
 	echo ${C_YEL}"DATABASE"${C_END}" has been installed."
 
 database-replace: ## replaces container database with the latest sql backup file from resources/database
-	sudo docker exec -i $(DB_CAAS) sh -c 'exec mysql $(DB_NAME) -uroot -p"$(DB_ROOT)"' < $(DB_BACKUP_PATH)/$(DB_BACKUP_NAME)-backup.sql
+	sudo docker exec -i $(DATABASE_CAAS) sh -c 'exec mysql $(DATABASE_NAME) -uroot -p"$(DATABASE_ROOT)"' < $(DATABASE_PATH)$(DATABASE_BACK)
 	echo ${C_YEL}"DATABASE"${C_END}" has been replaced."
 
 database-backup: ## creates / replace a sql backup file from container database in resources/database
-	sudo docker exec $(DB_CAAS) sh -c 'exec mysqldump $(DB_NAME) -uroot -p"$(DB_ROOT)"' > $(DB_BACKUP_PATH)/$(DB_BACKUP_NAME)-backup.sql
+	sudo docker exec $(DATABASE_CAAS) sh -c 'exec mysqldump $(DATABASE_NAME) -uroot -p"$(DATABASE_ROOT)"' > $(DATABASE_PATH)$(DATABASE_BACK)
 	echo ${C_YEL}"DATABASE"${C_END}" backup has been created."
 
 # -------------------------------------------------------------------------------------------------
 #  Repository Helper
 # -------------------------------------------------------------------------------------------------
-repo-flush: ## clears local git repository cache specially to update .gitignore
+repo-flush: ## clears local git repository cache specially for updating .gitignore
 	git rm -rf --cached .
 	git add .
 	git commit -m "fix: cache cleared for untracked files"
 
-repo-commit: ## echoes commit helper
+repo-commit: ## echoes common git commands
 	echo "git add . && git commit -m \"maint: ... \" && git push -u origin main"
+	echo ${C_YEL}"For fixing pushed commit comment:"${C_END}
+	echo "git commit --amend"
+	echo "git push --force origin main"

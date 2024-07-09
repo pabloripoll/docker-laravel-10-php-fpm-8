@@ -18,10 +18,17 @@ lerna-debug.log*
 *.sln
 *.sw?
 .env
+.env.local
+.env.prod
+.env.production
 vendor
 node_modules
-dist
-dist-ssr
+#dist
+#dist-ssr
 *.local
 
-Docs.md
+/vault
+/database/migrations/temp
+/database/migrations/vault
+/infrastructure/mysql/data
+/infrastructure/mariadb/data
